@@ -7,10 +7,9 @@ from fpdf import FPDF
 import os
 import sys
 
-# FIX: Tell Streamlit Cloud to find the 'src' folder
+# FIX 1: Ensures Python can find your 'src' folder
 sys.path.append('.') 
 
-# FIX: Import from the 'src' folder
 from src.utils import *
 from src.viz import *
 
@@ -189,7 +188,8 @@ if 'data' in st.session_state:
 
     k1, k2, k3, k4 = st.columns(4)
     k1.metric("BENCHMARK", d['meta']['bench'])
-    k2.metric("TOP ASSET (SHARPE)", d['met']['Sharpe Ratio'].idxmax(), f"{d['met']['SharS/Ratio'].max():.2f}")
+    # FIX 2: Corrected 'SharS/Ratio' typo to 'Sharpe Ratio'
+    k2.metric("TOP ASSET (SHARPE)", d['met']['Sharpe Ratio'].idxmax(), f"{d['met']['Sharpe Ratio'].max():.2f}")
     k3.metric("HIGHEST RISK (VOL)", d['met']['Ann Volatility'].idxmax(), f"{d['met']['Ann Volatility'].max():.1%}")
     k4.metric("DATA SOURCE", d['meta']['src'].upper(), delta="Live" if d['meta']['src']=='live' else "Offline Mode", delta_color="off")
 
