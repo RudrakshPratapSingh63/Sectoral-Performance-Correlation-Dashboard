@@ -21,7 +21,7 @@ st.markdown("""
     
     /* WIDER SIDEBAR */
     section[data-testid="stSidebar"] {
-        width: 375px !important; /* Increased width */
+        width: 390px !important; /* Increased width */
     }
     [data-testid="stSidebar"] { 
         background-color: #161B22; 
