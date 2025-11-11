@@ -1,3 +1,11 @@
+import sys
+sys.path.append('.')
+
+# --- All other imports go below this line ---
+import streamlit as st
+import pandas as pd
+import plotly.express as px
+# ...rest of your code...
 import streamlit as st
 import pandas as pd
 import plotly.express as px
