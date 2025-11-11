@@ -1,11 +1,3 @@
-import sys
-sys.path.append('.')
-
-# --- All other imports go below this line ---
-import streamlit as st
-import pandas as pd
-import plotly.express as px
-# ...rest of your code...
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -15,9 +7,10 @@ from fpdf import FPDF
 import os
 import sys
 
-# FIX 1: Ensure Python can find your 'src' folder
+# FIX: Tell Streamlit Cloud to find the 'src' folder
 sys.path.append('.') 
 
+# FIX: Import from the 'src' folder
 from src.utils import *
 from src.viz import *
 
@@ -67,7 +60,6 @@ st.markdown("""
 class QuantPDF(FPDF):
     def header(self):
         self.set_fill_color(22, 27, 34); self.rect(0, 0, 210, 35, 'F')
-        # FIX 2: Use standard 'Arial' font, not 'Helvetica'
         self.set_font('Arial', 'B', 22); self.set_text_color(220, 20, 60)
         self.cell(0, 15, 'SECTORAL PERFORMANCE REPORT', 0, 1, 'L')
         self.set_font('Arial', '', 10); self.set_text_color(150)
@@ -126,26 +118,24 @@ with st.sidebar:
     with st.expander("DISTINCT SECTORS / ASSETS", expanded=True):
         choices = get_ticker_choices(); names = list(choices.keys())
         
-        # FIX 3: Removed st.rerun() from button logic
         new_tickers = []
         for i in range(len(st.session_state.tickers)):
             c1, c2 = st.columns([5, 1])
             selected = c1.selectbox(f"Asset {i+1}", names, index=names.index(st.session_state.tickers[i]) if st.session_state.tickers[i] in names else 0, key=f"s_{i}", label_visibility="collapsed")
+            if c2.button("➖", key=f"rm_{i}"):
+                if len(st.session_state.tickers) > 1:
+                    continue # Skip adding this one to the new list
             new_tickers.append(selected)
-            if not c2.button("➖", key=f"rm_{i}"):
-                pass # This button press will be handled by the logic below
-        
-        # Update session state *after* all widgets are drawn
         st.session_state.tickers = new_tickers
         
         if st.button("➕ Add Sector", use_container_width=True):
             st.session_state.tickers.append(names[0])
-            st.rerun() # This one is OK as it's outside the widget loop
+            st.rerun()
             
         custom = st.text_input("Or Custom Ticker (e.g. MSFT)")
         if st.button("Add Custom") and custom:
             st.session_state.tickers.append(custom)
-            st.rerun() # This one is also OK
+            st.rerun()
 
     with st.expander("TIME HORIZON", expanded=True):
         start_date = st.date_input("Start Date", datetime.today() - timedelta(days=365*2))
@@ -184,7 +174,7 @@ with st.sidebar:
                 'px': px_data, 'met': metrics, 'sim': sim, 'insights': insights,
                 'meta': {'src': src, 'bench': benchmark, 'start': str(start_date), 'end': str(end_date), 'tickers': st.session_state.tickers}
             }
-            st.rerun() # This is the correct place to call rerun
+            st.rerun()
 
 # --- MAIN BODY ---
 if 'data' in st.session_state:
@@ -199,7 +189,7 @@ if 'data' in st.session_state:
 
     k1, k2, k3, k4 = st.columns(4)
     k1.metric("BENCHMARK", d['meta']['bench'])
-    k2.metric("TOP ASSET (SHARPE)", d['met']['Sharpe Ratio'].idxmax(), f"{d['met']['Sharpe Ratio'].max():.2f}")
+    k2.metric("TOP ASSET (SHARPE)", d['met']['Sharpe Ratio'].idxmax(), f"{d['met']['SharS/Ratio'].max():.2f}")
     k3.metric("HIGHEST RISK (VOL)", d['met']['Ann Volatility'].idxmax(), f"{d['met']['Ann Volatility'].max():.1%}")
     k4.metric("DATA SOURCE", d['meta']['src'].upper(), delta="Live" if d['meta']['src']=='live' else "Offline Mode", delta_color="off")
 
