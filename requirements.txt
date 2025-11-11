@@ -1,0 +1,10 @@
+streamlit
+pandas
+numpy
+yfinance
+scipy
+matplotlib
+seaborn
+plotly
+fpdf2
+requests-cache
